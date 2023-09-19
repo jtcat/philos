@@ -13,7 +13,7 @@ OBJ:=$(SRC:.c=.o)
 %.o:	%.c $(INC)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-NAME:	$(OBJ)
+$(NAME):	$(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@
 
 all:	$(NAME)
