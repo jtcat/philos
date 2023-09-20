@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 22:04:25 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 11:43:31 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 12:22:55 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,11 @@ int	eat(t_params *params, int id)
 	{
 		pthread_mutex_lock(&params->crit_mtx);
 		if (++params->total_finished == params->philo_n)
+		{
+			params->dead_flag = 1;
+			pthread_mutex_unlock(&params->crit_mtx);
 			return (0);
+		}
 		pthread_mutex_unlock(&params->crit_mtx);
 	}
 	return (1);

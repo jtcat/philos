@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 11:41:54 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 12:21:00 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	init_threads(t_params *params)
 		pthread_mutex_init(&params->philos[i].fork_crit, NULL);
 		args->params->philos[i].last_meal_ets = 0;
 		args->params->philos[i].fork_status = -1;
-		if (!(i % 2) && (!(args->params->philo_n % 2) || (args->params->philo_n % 2 && i == (args->params->philo_n - 1))))
+		if (!(i % 2) && right(params, i) != 0)
 		{
 			printf("philo %2d is priviliged\n", i);
 			args->params->philos[right(params, i)].fork_status = i;
