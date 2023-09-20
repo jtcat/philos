@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 12:21:00 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 12:55:51 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ void	cleanup_philos(t_params *params)
 	i = 0;
 	while (i < params->philo_n)
 		pthread_mutex_destroy(&params->philos[i++].fork_crit);
+	pthread_mutex_destroy(&params->crit_mtx);
+	pthread_mutex_destroy(&params->output_mtx);
 	free(params->philos);
 }
 
@@ -92,7 +94,6 @@ void	init_threads(t_params *params)
 	}
 	while (--i > 0)
 		pthread_join(params->philos[i].thread, NULL);
-	cleanup_philos(params);
 	free(args);
 }
 
@@ -107,6 +108,5 @@ int	main(int argc, char **argv)
 	pthread_mutex_init(&params.crit_mtx, NULL);
 	pthread_mutex_init(&params.output_mtx, NULL);
 	init_threads(&params);
-	pthread_mutex_destroy(&params.crit_mtx);
-	pthread_mutex_destroy(&params.output_mtx);
+	cleanup_philos(&params);
 }

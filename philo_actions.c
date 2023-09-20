@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 22:04:25 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 12:22:55 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 13:01:21 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 void	print_status(t_params *params, char *fstring, int ts, int id)
 {
 	pthread_mutex_lock(&params->output_mtx);
-	printf(fstring, ts, id);
+	printf(fstring, ts, id + 1);
 	pthread_mutex_unlock(&params->output_mtx);
 }
 
@@ -55,37 +55,44 @@ int	philosleep(t_params *params, int id)
 	return (1);
 }
 
+void	try_forks(t_params *params, int id, int *forks)
+{
+	pthread_mutex_lock(&params->philos[left(params, id)].fork_crit);
+	if (!(*forks & L_FORK)
+		&& (params->philos[left(params, id)].fork_status == -1
+			|| params->philos[left(params, id)].fork_status == id))
+	{
+		print_status(params, "%10d %2d got left fork\n", get_ets(params), id);
+		*forks |= L_FORK;
+		params->philos[left(params, id)].fork_status = id;
+	}
+	pthread_mutex_unlock(&params->philos[left(params, id)].fork_crit);
+	pthread_mutex_lock(&params->philos[right(params, id)].fork_crit);
+	if (!(*forks & R_FORK)
+		&& (params->philos[right(params, id)].fork_status == -1
+			|| params->philos[right(params, id)].fork_status == id))
+	{
+		print_status(params, "%10d %2d got right fork\n", get_ets(params), id);
+		*forks |= R_FORK;
+		params->philos[right(params, id)].fork_status = id;
+	}
+	pthread_mutex_unlock(&params->philos[right(params, id)].fork_crit);
+}
+
 int	take_forks(t_params *params, int id)
 {
 	int	start_ts;
-	int	owned_forks;
+	int	forks;
 
 	if (check_dead(params, id))
 		return (0);
-	owned_forks = 0;
+	forks = 0;
 	start_ts = get_ets(params);
 	print_status(params, "%10d %2d is thinking\n", start_ts, id);
 	while (!check_dead(params, id))
 	{
-		pthread_mutex_lock(&params->philos[left(params, id)].fork_crit);
-		if (!(owned_forks & L_FORK) && (params->philos[left(params, id)].fork_status == -1
-			|| params->philos[left(params, id)].fork_status == id))
-		{
-			print_status(params, "%10d %2d got left fork\n", get_ets(params), id);
-			owned_forks |= L_FORK;
-			params->philos[left(params, id)].fork_status = id;
-		}
-		pthread_mutex_unlock(&params->philos[left(params, id)].fork_crit);
-		pthread_mutex_lock(&params->philos[right(params, id)].fork_crit);
-		if (!(owned_forks & R_FORK) && (params->philos[right(params, id)].fork_status == -1
-			|| params->philos[right(params, id)].fork_status == id))
-		{
-			print_status(params, "%10d %2d got right fork\n", get_ets(params), id);
-			owned_forks |= R_FORK;
-			params->philos[right(params, id)].fork_status = id;
-		}
-		pthread_mutex_unlock(&params->philos[right(params, id)].fork_crit);
-		if (owned_forks == BOTH_FORKS)
+		try_forks(params, id, &forks);
+		if (forks == BOTH_FORKS)
 		{
 			print_status(params, "%10d %2d got both forks\n", get_ets(params), id);
 			return (1);
