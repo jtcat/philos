@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 03:24:17 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 10:35:35 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,11 @@ int	read_params(int argc, char **argv, t_params *params)
 	return (0);
 }
 
-void	philo_routine(t_params *params, int id)
+void	philo_routine(t_params *params, int id, int gofirst)
 {
-	while (take_forks(params, id) && eat(params, id))
+	while ((gofirst || take_forks(params, id)) && eat(params, id))
 	{
+		gofirst = 0;
 		put_forks(params, id);
 		if (!philosleep(params, id))
 			break ;
@@ -48,20 +49,25 @@ void	philo_routine(t_params *params, int id)
 void	*philo_init(void *vargs)
 {
 	t_philo_args	*args;
-	int				i;
+	int				gofirst;
 
+	gofirst = 1;
 	args = (t_philo_args *)vargs;
 	args->params->philos[args->id].meals = 0;
-	pthread_detach(args->params->philos[args->id].thread);
-	i = 0;
-	while (i < args->params->philo_n)
-	{
-		if (i != args->id)
-			pthread_join(args->params->philos[i].thread, NULL);
-		i++;
-	}
-	philo_routine(args->params, args->id);
+	if (args->id % 2 || (args->params->philo_n % 2 && args->id == (args->params->philo_n - 1)))
+		gofirst = 0;
+	philo_routine(args->params, args->id, gofirst);
 	return (NULL);
+}
+
+void	cleanup_philos(t_params *params)
+{
+	int	i;
+
+	i = 0;
+	while (i < params->philo_n)
+		pthread_mutex_destroy(&params->philos[i++].fork_crit);
+	free(params->philos);
 }
 
 void	init_threads(t_params *params)
@@ -80,12 +86,13 @@ void	init_threads(t_params *params)
 		pthread_mutex_init(&params->philos[i].fork_crit, NULL);
 		args->params->philos[i].last_meal_ets = 0;
 		args->params->philos[i].fork_status = FREE;
-		pthread_create(&params->philos->thread, NULL, &philo_init, args + i);
+		pthread_create(&params->philos[i].thread, NULL, &philo_init, args + i);
+		//pthread_detach(args->params->philos[i].thread);
 		i++;
 	}
 	while (--i > 0)
 		pthread_join(params->philos[i].thread, NULL);
-	free(params->philos);
+	cleanup_philos(params);
 	free(args);
 }
 
@@ -96,6 +103,7 @@ int	main(int argc, char **argv)
 	if (!read_params(argc, argv, &params))
 		return (1);
 	params.total_finished = 0;
+	params.dead_flag = 0;
 	pthread_mutex_init(&params.crit_mtx, NULL);
 	pthread_mutex_init(&params.output_mtx, NULL);
 	init_threads(&params);

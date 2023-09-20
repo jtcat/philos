@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:49:31 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 03:12:18 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 10:29:18 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_params
 	int				min_meals;
 	int				init_ts;
 	int				total_finished;
+	int				dead_flag;
 	t_philo			*philos;
 	pthread_mutex_t	output_mtx;
 	pthread_mutex_t	crit_mtx;

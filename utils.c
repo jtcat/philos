@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 15:53:43 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 03:22:53 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 10:01:22 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,16 @@ int	check_intof(char *str)
 {
 	char const	max_str[] = "2147483647";
 	int			i;
+	int			overdigit;
 
 	i = 0;
-	while (max_str[i] && str[i] && str[i] == max_str[i])
+	overdigit = 0;
+	while (max_str[i] && str[i])
+	{
+		overdigit = str[i] > max_str[i];
 		i++;
-	return (str[i] > max_str[i]);
+	}
+	return (i == 10 && (str[i] || overdigit));
 }
 
 int	ft_atoi(char *str, int *dst)
