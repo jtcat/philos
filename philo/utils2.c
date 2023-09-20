@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   time_stamp.c                                       :+:      :+:    :+:   */
+/*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 23:52:18 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 02:11:48 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 19:28:55 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,11 @@ int	left(t_params *params, int id)
 int	right(t_params *params, int id)
 {
 	return ((id + 1) % params->philo_n);
+}
+
+void	print_status(t_params *params, char *fstring, int ts, int id)
+{
+	pthread_mutex_lock(&params->output_mtx);
+	printf(fstring, ts, id + 1);
+	pthread_mutex_unlock(&params->output_mtx);
 }

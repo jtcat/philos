@@ -6,7 +6,7 @@ CFLAGS:= -g -pthread -Wall -Wextra -Werror -fsanitize=thread
 
 INC:= philo.h
 
-SRC:= main.c utils.c philo_actions.c time_stamp.c
+SRC:= main.c philo_actions.c utils.c utils2.c
 
 OBJ:= $(SRC:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 22:04:25 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 17:56:50 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 19:30:22 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,6 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-void	print_status(t_params *params, char *fstring, int ts, int id)
-{
-	pthread_mutex_lock(&params->output_mtx);
-	printf(fstring, ts, id + 1);
-	pthread_mutex_unlock(&params->output_mtx);
-}
-
-int	check_dead(t_params *params, int id)
-{
-	pthread_mutex_lock(&params->crit_mtx);
-	if (params->dead_flag)
-	{
-		pthread_mutex_unlock(&params->crit_mtx);
-		return (1);
-	}
-	if ((get_ets(params) - params->philos[id].last_meal_ets) >= params->ttd)
-	{
-		params->dead_flag = 1;
-		print_status(params, "%d philo %d died\n", get_ets(params), id);
-		pthread_mutex_unlock(&params->crit_mtx);
-		return (1);
-	}
-	pthread_mutex_unlock(&params->crit_mtx);
-	return (0);
-}
 
 int	philosleep(t_params *params, int id)
 {
@@ -62,7 +36,6 @@ void	try_forks(t_params *params, int id, int *forks)
 		&& (params->philos[left(params, id)].fork_status == -1
 			|| params->philos[left(params, id)].fork_status == id))
 	{
-		//print_status(params, "%10d %2d got left fork\n", get_ets(params), id);
 		*forks |= L_FORK;
 		params->philos[left(params, id)].fork_status = id;
 	}
@@ -72,7 +45,6 @@ void	try_forks(t_params *params, int id, int *forks)
 		&& (params->philos[right(params, id)].fork_status == -1
 			|| params->philos[right(params, id)].fork_status == id))
 	{
-		//print_status(params, "%10d %2d got right fork\n", get_ets(params), id);
 		*forks |= R_FORK;
 		params->philos[right(params, id)].fork_status = id;
 	}

@@ -6,11 +6,11 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 15:53:43 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 10:01:22 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 19:30:33 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include "philo.h"
 
 static int	ft_isdigit(char c)
 {
@@ -56,4 +56,23 @@ int	ft_atoi(char *str, int *dst)
 		str++;
 	}
 	return (1);
+}
+
+int	check_dead(t_params *params, int id)
+{
+	pthread_mutex_lock(&params->crit_mtx);
+	if (params->dead_flag)
+	{
+		pthread_mutex_unlock(&params->crit_mtx);
+		return (1);
+	}
+	if ((get_ets(params) - params->philos[id].last_meal_ets) >= params->ttd)
+	{
+		params->dead_flag = 1;
+		print_status(params, "%d philo %d died\n", get_ets(params), id);
+		pthread_mutex_unlock(&params->crit_mtx);
+		return (1);
+	}
+	pthread_mutex_unlock(&params->crit_mtx);
+	return (0);
 }
