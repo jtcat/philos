@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 20:20:19 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:27:42 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ int	main(int argc, char **argv)
 
 	if (!read_params(argc, argv, &params))
 		return (1);
+	if (params.min_meals == 0)
+		return (0);
 	params.philos = malloc(sizeof(t_philo) * params.philo_n);
 	params.init_ts = get_ts();
 	params.total_finished = 0;
