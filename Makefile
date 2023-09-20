@@ -2,7 +2,7 @@ NAME:= philo
 
 CC:=cc
 
-CFLAGS:= -Wall -Wextra -Werror
+CFLAGS:= -pthread -Wall -Wextra -Werror
 
 INC:= philo.h
 
