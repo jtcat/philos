@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 22:04:25 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 16:50:54 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 17:56:50 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	try_forks(t_params *params, int id, int *forks)
 	}
 	pthread_mutex_unlock(&params->philos[left(params, id)].fork_crit);
 	pthread_mutex_lock(&params->philos[right(params, id)].fork_crit);
-	if (!(*forks & R_FORK)
+	if (right(params, id) != left(params, id) && !(*forks & R_FORK)
 		&& (params->philos[right(params, id)].fork_status == -1
 			|| params->philos[right(params, id)].fork_status == id))
 	{
@@ -93,10 +93,7 @@ int	take_forks(t_params *params, int id)
 	{
 		try_forks(params, id, &forks);
 		if (forks == BOTH_FORKS)
-		{
-			//print_status(params, "%10d %2d got both forks\n", get_ets(params), id);
 			return (1);
-		}
 	}
 	return (0);
 }
@@ -106,7 +103,8 @@ int	eat(t_params *params, int id)
 	if (check_dead(params, id))
 		return (0);
 	params->philos[id].last_meal_ets = get_ets(params);
-	print_status(params, "%d %d is eating\n", params->philos[id].last_meal_ets, id);
+	print_status(params, "%d %d is eating\n", \
+			params->philos[id].last_meal_ets, id);
 	while ((get_ets(params) - params->philos[id].last_meal_ets) < params->tte)
 		if (check_dead(params, id))
 			return (0);
