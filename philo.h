@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:49:31 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 02:18:07 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 03:12:18 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int		left(t_params *params, int id);
 int		right(t_params *params, int id);
 int		get_ts(void);
 int		get_ets(t_params *params);
-int		ft_atoi(char *str);
+int		ft_atoi(char *str, int *dst);
 
 // Philo actions
 int		philosleep(t_params *params, int id);

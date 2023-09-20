@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 02:28:36 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 03:24:17 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,21 @@
 int	read_params(int argc, char **argv, t_params *params)
 {
 	if (argc < 5 || argc > 6)
+	{
+		printf("Invalid number of arguments, must be 4 or 5\n");
 		return (0);
-	params->philo_n = ft_atoi(argv[1]);
-	params->ttd = ft_atoi(argv[2]);
-	params->tte = ft_atoi(argv[3]);
-	params->tts = ft_atoi(argv[4]);
-	params->min_meals = -1;
-	if (argc == 6)
-		params->min_meals = ft_atoi(argv[5]);
-	return (1);
+	}
+	if (ft_atoi(argv[1], &params->philo_n)
+		&& ft_atoi(argv[2], &params->ttd)
+		&& ft_atoi(argv[3], &params->tte)
+		&& ft_atoi(argv[4], &params->tts))
+	{
+		params->min_meals = -1;
+		if (argc == 6)
+			return (ft_atoi(argv[5], &params->min_meals));
+		return (1);
+	}
+	return (0);
 }
 
 void	philo_routine(t_params *params, int id)

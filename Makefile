@@ -6,9 +6,9 @@ CFLAGS:= -Wall -Wextra -Werror
 
 INC:= philo.h
 
-SRC:=main.c utils.c
+SRC:= main.c utils.c philo_actions.c time_stamp.c
 
-OBJ:=$(SRC:.c=.o)
+OBJ:= $(SRC:.c=.o)
 
 %.o:	%.c $(INC)
 	$(CC) -c $(CFLAGS) -o $@ $<
