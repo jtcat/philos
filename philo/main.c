@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 20:17:20 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 20:20:19 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ void	init_threads(t_params *params)
 	int				i;
 
 	args = malloc(sizeof(t_philo_args) * params->philo_n);
-	params->philos = malloc(sizeof(t_philo) * params->philo_n);
-	params->init_ts = get_ts();
 	i = params->philo_n;
 	while (--i >= 0)
 	{
@@ -99,6 +97,8 @@ int	main(int argc, char **argv)
 
 	if (!read_params(argc, argv, &params))
 		return (1);
+	params.philos = malloc(sizeof(t_philo) * params.philo_n);
+	params.init_ts = get_ts();
 	params.total_finished = 0;
 	params.dead_flag = 0;
 	pthread_mutex_init(&params.crit_mtx, NULL);
