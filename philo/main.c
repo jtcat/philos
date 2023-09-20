@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 19:27:42 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 19:40:33 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,19 @@ int	read_params(int argc, char **argv, t_params *params)
 	return (0);
 }
 
-void	philo_routine(t_params *params, int id)
-{
-	while (take_forks(params, id) && eat(params, id))
-	{
-		put_forks(params, id);
-		if (!philosleep(params, id))
-			break ;
-	}
-}
-
 void	*philo_init(void *vargs)
 {
 	t_philo_args	*args;
 
 	args = (t_philo_args *)vargs;
 	args->params->philos[args->id].meals = 0;
-	philo_routine(args->params, args->id);
+	while (take_forks(args->params, args->id)
+		&& eat(args->params, args->id))
+	{
+		put_forks(args->params, args->id);
+		if (!philosleep(args->params, args->id))
+			break ;
+	}
 	return (NULL);
 }
 
