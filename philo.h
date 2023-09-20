@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:49:31 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 10:29:18 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 11:24:20 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@
 
 enum e_fork_status
 {
-	FREE,
-	OWNED
+	L_FORK = 1,
+	R_FORK = 2,
+	BOTH_FORKS = L_FORK | R_FORK
 };
 
 typedef struct s_philo

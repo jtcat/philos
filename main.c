@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 10:35:35 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 11:41:54 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,10 @@ int	read_params(int argc, char **argv, t_params *params)
 	return (0);
 }
 
-void	philo_routine(t_params *params, int id, int gofirst)
+void	philo_routine(t_params *params, int id)
 {
-	while ((gofirst || take_forks(params, id)) && eat(params, id))
+	while (take_forks(params, id) && eat(params, id))
 	{
-		gofirst = 0;
 		put_forks(params, id);
 		if (!philosleep(params, id))
 			break ;
@@ -49,14 +48,10 @@ void	philo_routine(t_params *params, int id, int gofirst)
 void	*philo_init(void *vargs)
 {
 	t_philo_args	*args;
-	int				gofirst;
 
-	gofirst = 1;
 	args = (t_philo_args *)vargs;
 	args->params->philos[args->id].meals = 0;
-	if (args->id % 2 || (args->params->philo_n % 2 && args->id == (args->params->philo_n - 1)))
-		gofirst = 0;
-	philo_routine(args->params, args->id, gofirst);
+	philo_routine(args->params, args->id);
 	return (NULL);
 }
 
@@ -85,9 +80,14 @@ void	init_threads(t_params *params)
 		args[i].params = params;
 		pthread_mutex_init(&params->philos[i].fork_crit, NULL);
 		args->params->philos[i].last_meal_ets = 0;
-		args->params->philos[i].fork_status = FREE;
+		args->params->philos[i].fork_status = -1;
+		if (!(i % 2) && (!(args->params->philo_n % 2) || (args->params->philo_n % 2 && i == (args->params->philo_n - 1))))
+		{
+			printf("philo %2d is priviliged\n", i);
+			args->params->philos[right(params, i)].fork_status = i;
+			args->params->philos[left(params, i)].fork_status = i;
+		}
 		pthread_create(&params->philos[i].thread, NULL, &philo_init, args + i);
-		//pthread_detach(args->params->philos[i].thread);
 		i++;
 	}
 	while (--i > 0)
