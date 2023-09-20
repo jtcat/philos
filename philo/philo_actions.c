@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 22:04:25 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 13:01:21 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 16:50:54 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	check_dead(t_params *params, int id)
 	if ((get_ets(params) - params->philos[id].last_meal_ets) >= params->ttd)
 	{
 		params->dead_flag = 1;
-		print_status(params, "%10d %2d died\n", get_ets(params), id);
+		print_status(params, "%d philo %d died\n", get_ets(params), id);
 		pthread_mutex_unlock(&params->crit_mtx);
 		return (1);
 	}
@@ -48,7 +48,7 @@ int	philosleep(t_params *params, int id)
 	if (check_dead(params, id))
 		return (0);
 	start_ts = get_ets(params);
-	print_status(params, "%10d %2d is sleeping\n", start_ts, id);
+	print_status(params, "%d %d is sleeping\n", start_ts, id);
 	while ((get_ets(params) - start_ts) < params->tts)
 		if (check_dead(params, id))
 			return (0);
@@ -62,7 +62,7 @@ void	try_forks(t_params *params, int id, int *forks)
 		&& (params->philos[left(params, id)].fork_status == -1
 			|| params->philos[left(params, id)].fork_status == id))
 	{
-		print_status(params, "%10d %2d got left fork\n", get_ets(params), id);
+		//print_status(params, "%10d %2d got left fork\n", get_ets(params), id);
 		*forks |= L_FORK;
 		params->philos[left(params, id)].fork_status = id;
 	}
@@ -72,7 +72,7 @@ void	try_forks(t_params *params, int id, int *forks)
 		&& (params->philos[right(params, id)].fork_status == -1
 			|| params->philos[right(params, id)].fork_status == id))
 	{
-		print_status(params, "%10d %2d got right fork\n", get_ets(params), id);
+		//print_status(params, "%10d %2d got right fork\n", get_ets(params), id);
 		*forks |= R_FORK;
 		params->philos[right(params, id)].fork_status = id;
 	}
@@ -88,13 +88,13 @@ int	take_forks(t_params *params, int id)
 		return (0);
 	forks = 0;
 	start_ts = get_ets(params);
-	print_status(params, "%10d %2d is thinking\n", start_ts, id);
+	print_status(params, "%d %d is thinking\n", start_ts, id);
 	while (!check_dead(params, id))
 	{
 		try_forks(params, id, &forks);
 		if (forks == BOTH_FORKS)
 		{
-			print_status(params, "%10d %2d got both forks\n", get_ets(params), id);
+			//print_status(params, "%10d %2d got both forks\n", get_ets(params), id);
 			return (1);
 		}
 	}
@@ -106,7 +106,7 @@ int	eat(t_params *params, int id)
 	if (check_dead(params, id))
 		return (0);
 	params->philos[id].last_meal_ets = get_ets(params);
-	print_status(params, "%10d %2d is eating\n", params->philos[id].last_meal_ets, id);
+	print_status(params, "%d %d is eating\n", params->philos[id].last_meal_ets, id);
 	while ((get_ets(params) - params->philos[id].last_meal_ets) < params->tte)
 		if (check_dead(params, id))
 			return (0);

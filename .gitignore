@@ -1,4 +1,4 @@
 *.o
 compile_commands.json
 .cache/
-philo
+philo/philo

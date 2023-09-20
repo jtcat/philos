@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 12:55:51 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/20 16:45:25 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,10 @@ void	init_threads(t_params *params)
 	t_philo_args	*args;
 	int				i;
 
-	i = 0;
 	args = malloc(sizeof(t_philo_args) * params->philo_n);
 	params->philos = malloc(sizeof(t_philo) * params->philo_n);
 	params->init_ts = get_ts();
+	i = 0;
 	while (i < params->philo_n)
 	{
 		args[i].id = i;
@@ -83,16 +83,22 @@ void	init_threads(t_params *params)
 		pthread_mutex_init(&params->philos[i].fork_crit, NULL);
 		args->params->philos[i].last_meal_ets = 0;
 		args->params->philos[i].fork_status = -1;
-		if (!(i % 2) && right(params, i) != 0)
+		if (!(i % 2)) 
 		{
-			printf("philo %2d is priviliged\n", i);
-			args->params->philos[right(params, i)].fork_status = i;
+			//printf("philo %2d is priviliged\n", i + 1);
 			args->params->philos[left(params, i)].fork_status = i;
+			if (right(params, i) != 0)
+				args->params->philos[right(params, i)].fork_status = i;
 		}
+		i++;
+	}
+	i = 0;
+	while (i < params->philo_n)
+	{
 		pthread_create(&params->philos[i].thread, NULL, &philo_init, args + i);
 		i++;
 	}
-	while (--i > 0)
+	while (--i >= 0)
 		pthread_join(params->philos[i].thread, NULL);
 	free(args);
 }
