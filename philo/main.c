@@ -6,7 +6,7 @@
 /*   By: joaoteix <joaoteix@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/07 14:57:05 by joaoteix          #+#    #+#             */
-/*   Updated: 2023/09/20 20:27:42 by joaoteix         ###   ########.fr       */
+/*   Updated: 2023/09/22 15:24:25 by joaoteix         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ void	init_threads(t_params *params)
 	int				i;
 
 	args = malloc(sizeof(t_philo_args) * params->philo_n);
+	if (!args)
+		printf("Memory allocation error\n");
 	i = params->philo_n;
 	while (--i >= 0)
 	{
@@ -78,11 +80,9 @@ void	init_threads(t_params *params)
 		params->philos[i].fork_status = -1;
 		pthread_mutex_init(&params->philos[i].fork_crit, NULL);
 		if (!(i % 2)) 
-		{
 			params->philos[left(params, i)].fork_status = i;
-			if (right(params, i) != 0)
-				params->philos[right(params, i)].fork_status = i;
-		}
+		if (!(i % 2) && right(params, i) != 0)
+			params->philos[right(params, i)].fork_status = i;
 	}
 	while (++i < params->philo_n)
 		pthread_create(&params->philos[i].thread, NULL, &philo_init, args + i);
@@ -100,6 +100,11 @@ int	main(int argc, char **argv)
 	if (params.min_meals == 0)
 		return (0);
 	params.philos = malloc(sizeof(t_philo) * params.philo_n);
+	if (!params.philos)
+	{
+		printf("Memory allocation error\n");
+		return (1);
+	}
 	params.init_ts = get_ts();
 	params.total_finished = 0;
 	params.dead_flag = 0;
